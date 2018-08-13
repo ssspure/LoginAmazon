@@ -1,10 +1,10 @@
 from com.LoginAmazon import LoginAmazon
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import zipfile
-import time
 from com.Utils import *
 import os
+import logging
+from com.Properties import Properties
 
 
 def setChromeOptions(ip, port):
@@ -75,18 +75,18 @@ def setChromeOptions(ip, port):
 def goAmazon():
 
     ipaddress = os.path.join(os.path.dirname(os.path.abspath(__file__)), "com/ipaddress")
+    infoProperties = os.path.join(os.path.dirname(os.path.abspath(__file__)), "com/info.properties")
 
     ipFile = open(ipaddress, "r")
+
+    properties = Properties(infoProperties)
 
     for ipLine in ipFile:
         ipLine = ipLine.strip('\n')
         result = checkIP(ipLine)
 
-        if not result:
-            print("{}不可用".format(ipLine))
-
         if result:
-            print("{}可用".format(ipLine))
+            logging.debug("%s 地址可用", ipLine)
             ip = ipLine.split(":")[0]
             port = ipLine.split(":")[1]
 
@@ -94,19 +94,30 @@ def goAmazon():
 
             driver = webdriver.Chrome(chrome_options=options)
 
-            amazonUrl = r"https://www.amazon.com/gp/sign-in.html"
+            amazonUrl = properties.get("amazonUrl")
 
             userName = "ssspure@qq.com"
 
             password = "plmokn321."
 
-            asin = "B07DMF5B6Y"
+            asin = properties.get("asin")
 
-            keyWord = "bark collar"
+            keyWord = properties.get("keyWord")
 
             onlyCart = True
 
+            logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
+
             loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
 
+            logging.debug("%s地址操作完毕", ipLine)
+        else:
+            logging.debug("%s 地址不可用", ipLine)
+
+
 if __name__ == "__main__":
+    # 设置日志信息
+    setup_logging()
+    logging.debug("程序运行开始!!!")
     goAmazon()
+    logging.debug("程序运行结束!!!")

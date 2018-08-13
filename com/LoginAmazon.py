@@ -164,7 +164,6 @@ class LoginAmazon():
         self.driver.execute_script("window.scrollTo(0, {})".format(y))
 
         element = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.ID, "add-to-wishlist-button-submit")))
-        # self.driver.find_element_by_id("add-to-wishlist-button-submit").click()
         element.click()
         time.sleep(5)
         try:
