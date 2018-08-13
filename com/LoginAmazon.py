@@ -151,6 +151,8 @@ class LoginAmazon():
 
             self.driver.close()
 
+            self.driver.quit()
+
 
     def addToLikeList(self):
         """
