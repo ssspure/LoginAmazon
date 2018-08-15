@@ -83,36 +83,34 @@ def goAmazon():
 
     for ipLine in ipFile:
         ipLine = ipLine.strip('\n')
-        result = checkIP(ipLine)
+        ip = ipLine.split(":")[0]
+        port = ipLine.split(":")[1]
 
-        if result:
-            logging.debug("%s 地址可用", ipLine)
-            ip = ipLine.split(":")[0]
-            port = ipLine.split(":")[1]
+        options = setChromeOptions(ip, port)
 
-            options = setChromeOptions(ip, port)
+        driver = webdriver.Chrome(chrome_options=options)
 
-            driver = webdriver.Chrome(chrome_options=options)
+        driver.get("http://www.baidu.com")
+        driver.find_element_by_id("kw").send_keys("ip")
+        driver.find_element_by_id("su").click()
 
-            amazonUrl = properties.get("amazonUrl")
+        amazonUrl = properties.get("amazonUrl")
 
-            userName = "ssspure@qq.com"
+        userName = "ssspure@qq.com"
 
-            password = "plmokn321."
+        password = "plmokn321."
 
-            asin = properties.get("asin")
+        asin = properties.get("asin")
 
-            keyWord = properties.get("keyWord")
+        keyWord = properties.get("keyWord")
 
-            onlyCart = True
+        onlyCart = True
 
-            logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
+        logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
 
-            loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
+        loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
 
-            logging.debug("%s地址操作完毕", ipLine)
-        else:
-            logging.debug("%s 地址不可用", ipLine)
+        logging.debug("%s地址操作完毕", ipLine)
 
 
 if __name__ == "__main__":

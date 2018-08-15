@@ -43,3 +43,8 @@ def setup_logging(default_level=logging.DEBUG):
             logging.config.dictConfig(config)
     else:
         logging.basicConfig(level=default_level)
+
+
+class UrlAccessException(Exception):
+    def __init__(self):
+        pass

@@ -6,11 +6,9 @@ import random
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import logging
+from com.Utils import *
 
-# chrome_options = webdriver.ChromeOptions()
-# chrome_options.add_argument('--proxy-server=http://8.26.121.214:8080')
-# driver = webdriver.Chrome(chrome_options=chrome_options)
-# driver = webdriver.Chrome()
 
 class LoginAmazon():
 
@@ -22,6 +20,7 @@ class LoginAmazon():
         self.asin = asin
         self.keyWord = keyWord
         self.onlyCart = onlyCart
+        self.founded = False
 
         # 根据amazonUrl来判断是哪个国家的亚马逊
         if amazonUrl.find("co.jp") > 0:
@@ -40,7 +39,10 @@ class LoginAmazon():
 
         try:
             # 请求地址
-            self.driver.get(self.amazonUrl)
+            try:
+                self.driver.get(self.amazonUrl)
+            except UrlAccessException as e:
+                raise UrlAccessException
 
             if not self.onlyCart:
                 # 获取输入用户名的文本框
@@ -66,7 +68,6 @@ class LoginAmazon():
 
             pageNum = 1
 
-            founded = False
 
             while True:
                 time.sleep(5)
@@ -97,13 +98,13 @@ class LoginAmazon():
                 for product in products:
                     asinTemp = product["data-asin"]
                     if asinTemp == self.asin:
-                        founded = True
+                        self.founded = True
 
                         self.moveToProduct(product)
                         break
 
                 # 如果如果已经找到了对应的产品
-                if founded:
+                if self.founded:
                     break
                 else:
                     # 获取下一页
@@ -115,7 +116,7 @@ class LoginAmazon():
 
                     pageNum = pageNum + 1
 
-            if founded:
+            if self.founded:
                 if self.country == 1:
                     handles = list(self.driver.window_handles)
                     self.driver.switch_to_window(handles[1])
@@ -130,24 +131,25 @@ class LoginAmazon():
                 if self.country == 1:
                     self.driver.close()
                     self.driver.switch_to_window(handles[0])
-
+        except UrlAccessException as e:
+            logging.debug("IP不能正常使用,或者您的网络不能正常连接!!!")
         except Exception as e:
-            print(e.with_traceback())
+            logging.debug(repr(e))
         finally:
+            if self.founded:
+                if self.country == 2:
+                    self.driver.back()
 
-            if self.country == 2:
+                # 在结束之前，随便点击一个别人的产品
+                randNum = random.randint(0, 10)
+
+                # 随机点击别人产品
+                if len(products) <= randNum:
+                    randNum = 0
+
+                product = products[randNum]
+                self.moveToProduct(product)
                 self.driver.back()
-
-            # 在结束之前，随便点击一个别人的产品
-            randNum = random.randint(0, 10)
-
-            # 随机点击别人产品
-            if len(products) <= randNum:
-                randNum = 0
-
-            product = products[randNum]
-            self.moveToProduct(product)
-            self.driver.back()
 
             self.driver.close()
 
