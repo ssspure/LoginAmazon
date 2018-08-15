@@ -80,16 +80,28 @@ properties = Properties(infoProperties)
 
 for ipLine in ipFile:
     ipLine = ipLine.strip('\n')
-    ip = ipLine.split(":")[0]
-    port = ipLine.split(":")[1]
+    # ip = ipLine.split(":")[0]
+    # port = ipLine.split(":")[1]
+    #
+    # options = setChromeOptions(ip, port)
 
-    options = setChromeOptions(ip, port)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--proxy-server=http://{}".format(ipLine))
 
     driver = webdriver.Chrome(chrome_options=options)
 
-    driver.get("http://www.baidu.com")
-    driver.find_element_by_id("kw").send_keys("ip")
-    driver.find_element_by_id("su").click()
+    try:
+        # driver.get("https://whatismyipaddress.com/")
+        # driver.get("https://www.google.com")
+        driver.get("http://www.baidu.com")
+        driver.find_element_by_id("kw").send_keys("ip")
+        driver.find_element_by_id("su").click()
+        # driver.get("https://www.amazon.com")
+    except Exception as e:
+        print("test")
+
+
+    print(driver.page_source)
 
     driver.close()
     driver.quit()

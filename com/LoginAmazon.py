@@ -39,10 +39,7 @@ class LoginAmazon():
 
         try:
             # 请求地址
-            try:
-                self.driver.get(self.amazonUrl)
-            except UrlAccessException as e:
-                raise UrlAccessException
+            self.driver.get(self.amazonUrl)
 
             if not self.onlyCart:
                 # 获取输入用户名的文本框
@@ -131,7 +128,7 @@ class LoginAmazon():
                 if self.country == 1:
                     self.driver.close()
                     self.driver.switch_to_window(handles[0])
-        except UrlAccessException as e:
+        except NoSuchElementException as e:
             logging.debug("IP不能正常使用,或者您的网络不能正常连接!!!")
         except Exception as e:
             logging.debug(repr(e))

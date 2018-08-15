@@ -86,13 +86,20 @@ def goAmazon():
         ip = ipLine.split(":")[0]
         port = ipLine.split(":")[1]
 
-        options = setChromeOptions(ip, port)
+        logging.debug("{} ip的操作开始!!!".format(ipLine))
+
+        # options = setChromeOptions(ip, port)
+        #
+        # driver = webdriver.Chrome(chrome_options=options)
+
+        options = webdriver.ChromeOptions()
+        options.add_argument("--proxy-server=http://{}".format(ipLine))
 
         driver = webdriver.Chrome(chrome_options=options)
 
-        driver.get("http://www.baidu.com")
-        driver.find_element_by_id("kw").send_keys("ip")
-        driver.find_element_by_id("su").click()
+        # driver.get("http://www.baidu.com")
+        # driver.find_element_by_id("kw").send_keys("ip")
+        # driver.find_element_by_id("su").click()
 
         amazonUrl = properties.get("amazonUrl")
 
@@ -110,7 +117,7 @@ def goAmazon():
 
         loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
 
-        logging.debug("%s地址操作完毕", ipLine)
+        logging.debug("{} ip的操作结束!!!".format(ipLine))
 
 
 if __name__ == "__main__":
