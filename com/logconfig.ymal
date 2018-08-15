@@ -15,14 +15,15 @@ handlers:
     formatter: simple
     level: DEBUG
     filename: debug.log
+    encoding: utf-8
   error:
     class: logging.handlers.RotatingFileHandler
     level: ERROR
     formatter: simple
-    filename: error.log
+    filename: debug.log
     maxBytes: 10485760
     backupCount: 20
-    encoding: utf8
+    encoding: utf-8
 loggers:
   main.core:
     level: DEBUG
