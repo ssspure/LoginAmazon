@@ -80,44 +80,72 @@ def goAmazon():
     ipFile = open(ipaddress, "r")
 
     properties = Properties(infoProperties)
+    browser = properties.get("browser")
 
     for ipLine in ipFile:
         ipLine = ipLine.strip('\n')
-        result = checkIP(ipLine)
+
+        # 检测IP地址是否有效
+        #result = checkIP(ipLine, browser)
+
+        result = True
 
         if result:
-            logging.debug("%s 地址可用", ipLine)
-            ip = ipLine.split(":")[0]
-            port = ipLine.split(":")[1]
+            logging.debug("%s 代理IP可用", ipLine)
 
-            options = setChromeOptions(ip, port)
+            # 根据info.properties中的browser的值，来设置浏览器选项
+            driver = setBrowser(ipLine, browser)
 
-            driver = webdriver.Chrome(chrome_options=options)
+            # 检测爬虫使用的代理IP地址是否和提供的代理IP地址一致
+            result, checkedProxyIP = checkScrapeProxyIP(ipLine.split(":")[0], driver)
 
-            amazonUrl = properties.get("amazonUrl")
+            # 0表示代理IP和爬虫实际使用的IP不一致
+            # 1表示代理IP和爬虫实际使用的IP一致
+            # 2表示没有验证代理IP和爬虫实际使用的IP是否一致
+            execute = 0
 
-            userName = "ssspure@qq.com"
+            if checkedProxyIP:
+                if result:
+                    logging.debug("代理IP和爬虫实际使用的IP一致!!!")
+                    execute = 1
+                else:
+                    logging.debug("代理IP和爬虫实际使用的IP不一致!!!")
+                    execute = 0
+            else:
+                logging.debug("代理IP和爬虫实际使用的IP检测失败!!!")
+                execute = 2
 
-            password = "plmokn321."
+            if execute != 0:
+                # 亚马逊地址
+                amazonUrl = properties.get("amazonUrl")
 
-            asin = properties.get("asin")
+                # 用户账号
+                userName = "ssspure@qq.com"
 
-            keyWord = properties.get("keyWord")
+                # 用户密码
+                password = "plmokn321."
 
-            onlyCart = True
+                # asin码
+                asin = properties.get("asin")
 
-            logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
+                # 搜索关键字
+                keyWord = properties.get("keyWord")
 
-            loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
+                # 是否只添加到购物车
+                onlyCart = True
 
-            logging.debug("%s地址操作完毕", ipLine)
+                logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
+
+                loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
+
+                logging.debug("%s地址操作完毕", ipLine)
         else:
-            logging.debug("%s 地址不可用", ipLine)
+            logging.debug("%s 代理IP不可用", ipLine)
 
 
 if __name__ == "__main__":
     # 设置日志信息
     setup_logging()
-    logging.debug("程序运行开始!!!")
+    logging.debug("*******************************程序运行开始*****************************")
     goAmazon()
-    logging.debug("程序运行结束!!!")
+    logging.debug("*******************************程序运行结束*****************************")

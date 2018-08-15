@@ -6,6 +6,7 @@ import random
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import logging
 
 # chrome_options = webdriver.ChromeOptions()
 # chrome_options.add_argument('--proxy-server=http://8.26.121.214:8080')
@@ -22,6 +23,7 @@ class LoginAmazon():
         self.asin = asin
         self.keyWord = keyWord
         self.onlyCart = onlyCart
+        self.founded = False
 
         # 根据amazonUrl来判断是哪个国家的亚马逊
         if amazonUrl.find("co.jp") > 0:
@@ -66,8 +68,6 @@ class LoginAmazon():
 
             pageNum = 1
 
-            founded = False
-
             while True:
                 time.sleep(5)
 
@@ -97,13 +97,13 @@ class LoginAmazon():
                 for product in products:
                     asinTemp = product["data-asin"]
                     if asinTemp == self.asin:
-                        founded = True
+                        self.founded = True
 
                         self.moveToProduct(product)
                         break
 
                 # 如果如果已经找到了对应的产品
-                if founded:
+                if self.founded:
                     break
                 else:
                     # 获取下一页
@@ -115,7 +115,7 @@ class LoginAmazon():
 
                     pageNum = pageNum + 1
 
-            if founded:
+            if self.founded:
                 if self.country == 1:
                     handles = list(self.driver.window_handles)
                     self.driver.switch_to_window(handles[1])
@@ -132,22 +132,23 @@ class LoginAmazon():
                     self.driver.switch_to_window(handles[0])
 
         except Exception as e:
-            print(e.with_traceback())
+            logging.debug(repr(e))
         finally:
 
-            if self.country == 2:
+            if self.founded:
+                if self.country == 2:
+                    self.driver.back()
+
+                # 在结束之前，随便点击一个别人的产品
+                randNum = random.randint(0, 10)
+
+                # 随机点击别人产品
+                if len(products) <= randNum:
+                    randNum = 0
+
+                product = products[randNum]
+                self.moveToProduct(product)
                 self.driver.back()
-
-            # 在结束之前，随便点击一个别人的产品
-            randNum = random.randint(0, 10)
-
-            # 随机点击别人产品
-            if len(products) <= randNum:
-                randNum = 0
-
-            product = products[randNum]
-            self.moveToProduct(product)
-            self.driver.back()
 
             self.driver.close()
 
@@ -183,7 +184,6 @@ class LoginAmazon():
         """
         button = WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, "add-to-cart-button")))
-        # button = self.driver.find_element_by_id("add-to-cart-button")
         y = self.driver.find_element_by_id("add-to-cart-button").location['y']
         self.driver.execute_script("window.scrollTo(0, {})".format(y))
         button.click()
@@ -201,7 +201,10 @@ class LoginAmazon():
         # 获取产品的id
         id = product.get("id")
         # 通过selenium来获取元素
-        pro = self.driver.find_element_by_id(id)
+        pro = WebDriverWait(self.driver, 40).until(
+            EC.presence_of_element_located((By.ID, id)))
+
+        # pro = self.driver.find_element_by_id(id)
 
         y = self.driver.find_element_by_id(id).location['y']
 
