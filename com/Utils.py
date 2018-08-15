@@ -98,8 +98,11 @@ def checkScrapeProxyIP(ip, driver):
     checkedProxyIP = False
     try:
         driver.get("http://httpbin.org/ip")
-        element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "objectBox")))
-        proxyIP = element.text.strip('"')
+        if str(driver).find("chrome") > 0:
+            proxyIP = json.loads(driver.find_element_by_tag_name("pre").text)["origin"]
+        else:
+            element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "objectBox")))
+            proxyIP = element.text.strip('"')
         checkedProxyIP = True
     except Exception as e:
         logging.debug("通过访问http://httpbin.org/ip验证代理IP失败,开始通过百度检测验证代理IP")

@@ -104,6 +104,7 @@ class LoginAmazon():
 
                 # 如果如果已经找到了对应的产品
                 if self.founded:
+                    logging.debug("找到了匹配的产品!!!")
                     break
                 else:
                     # 获取下一页
