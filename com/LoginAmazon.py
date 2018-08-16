@@ -49,7 +49,6 @@ class LoginAmazon():
         if self.onlyCart:
             self.amazonUrl = self.amazonUrl[0:self.amazonUrl.find("/gp")]
 
-
         self.gotoAmazon()
 
     def gotoAmazon(self):
@@ -146,12 +145,6 @@ class LoginAmazon():
                     self.driver.close()
                     self.driver.switch_to_window(handles[0])
 
-        except Exception as e:
-            self.error = True
-            logging.debug(repr(e))
-        finally:
-
-            if self.founded:
                 if self.country == 2:
                     self.driver.back()
 
@@ -166,6 +159,13 @@ class LoginAmazon():
                 self.moveToProduct(product)
                 self.driver.back()
 
+        except TimeoutException as e:
+            self.error = True
+            logging.debug(repr(e))
+        except Exception as e:
+            self.error = True
+            logging.debug(repr(e))
+        finally:
             clseBrowser(self.driver)
 
 
