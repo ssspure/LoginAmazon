@@ -16,14 +16,27 @@ import logging
 class LoginAmazon():
 
     def __init__(self, driver, amazonUrl, userName, password, asin, keyWord, onlyCart):
+        # 浏览器对象
         self.driver = driver
+        # 亚马逊地址
         self.amazonUrl = amazonUrl
+        # 用户名
         self.userName = userName
+        # 用户密码
         self.password = password
+        # 用户ASIN号码
         self.asin = asin
+        # 搜索关键字
         self.keyWord = keyWord
+        # 是否只加入购物车
         self.onlyCart = onlyCart
+        # 是否找到产品
         self.founded = False
+        # 错误代码
+        # 无错误是0,有错误的话根据相应的错误设置该代码
+        self.errorNum = 0
+        # 是够已经成功添加到购物车
+        self.addedToCart = False
 
         # 根据amazonUrl来判断是哪个国家的亚马逊
         if amazonUrl.find("co.jp") > 0:
@@ -133,6 +146,7 @@ class LoginAmazon():
                     self.driver.switch_to_window(handles[0])
 
         except Exception as e:
+            self.error = True
             logging.debug(repr(e))
         finally:
 
@@ -183,13 +197,17 @@ class LoginAmazon():
         将产品添加到购物车
         :return:
         """
-        button = WebDriverWait(self.driver, 20).until(
-            EC.presence_of_element_located((By.ID, "add-to-cart-button")))
-        y = self.driver.find_element_by_id("add-to-cart-button").location['y']
-        self.driver.execute_script("window.scrollTo(0, {})".format(y))
-        button.click()
-        self.driver.back()
-        time.sleep(5)
+        try:
+            button = WebDriverWait(self.driver, 20).until(
+                EC.presence_of_element_located((By.ID, "add-to-cart-button")))
+            y = self.driver.find_element_by_id("add-to-cart-button").location['y']
+            self.driver.execute_script("window.scrollTo(0, {})".format(y))
+            button.click()
+            self.driver.back()
+            time.sleep(5)
+            self.addedToCart = True
+        except Exception as e:
+            raise e
 
 
     def moveToProduct(self, product):

@@ -70,17 +70,18 @@ def setBrowser(ip, browser):
                 fp = webdriver.FirefoxProfile()
                 # Direct = 0, Manual = 1, PAC = 2, AUTODETECT = 4, SYSTEM = 5
                 fp.set_preference("network.proxy.type", 1)
-                fp.set_preference("network.proxy.http",PROXY_HOST)
-                fp.set_preference("network.proxy.http_port",int(PROXY_PORT))
-                fp.set_preference("network.proxy.ssl",PROXY_HOST)
-                fp.set_preference("network.proxy.ssl_port",int(PROXY_PORT))
-                fp.set_preference("general.useragent.override","whater_useragent")
+                fp.set_preference("network.proxy.http", PROXY_HOST)
+                fp.set_preference("network.proxy.http_port", int(PROXY_PORT))
+                fp.set_preference("network.proxy.ssl", PROXY_HOST)
+                fp.set_preference("network.proxy.ssl_port", int(PROXY_PORT))
+                fp.set_preference("general.useragent.override", "whater_useragent")
                 fp.update_preferences()
                 return webdriver.Firefox(firefox_profile=fp)
 
         driver = my_proxy(HOST, PORT)
     elif browser == "chrome":
         options = webdriver.ChromeOptions()
+        options.add_argument("--disable-gpu")
         options.add_argument("--proxy-server=http://{}".format(ip))
 
         driver = webdriver.Chrome(chrome_options=options)
@@ -120,7 +121,6 @@ def checkScrapeProxyIP(ip, driver):
             logging.debug("通过百度检测验证代理IP失败")
     finally:
         pass
-        # driver.close()
 
     if ip == proxyIP:
         result = True

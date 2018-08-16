@@ -1,0 +1,16 @@
+2018-08-16 10:01:48,825 - root - DEBUG - -------------------------------程序运行开始-------------------------------
+2018-08-16 10:01:48,825 - root - DEBUG - *********122.192.24.218:18888代理IP开始运行***********
+2018-08-16 10:01:54,604 - root - DEBUG - 通过访问http://httpbin.org/ip验证代理IP失败,开始通过百度检测验证代理IP
+2018-08-16 10:01:56,544 - root - DEBUG - 通过百度检测验证代理IP失败
+2018-08-16 10:01:56,544 - root - DEBUG - 代理IP和爬虫实际使用的IP检测失败!!!
+2018-08-16 10:01:56,544 - root - DEBUG - 亚马逊地址是:https://www.amazon.com/gp/sign-in.html,搜索关键词是:bark collar, ASIN码是:B07DMF5B6Y
+2018-08-16 10:01:56,547 - root - DEBUG - NoSuchWindowException('Browsing context has been discarded', None, None)
+2018-08-16 10:01:56,550 - root - DEBUG - *********122.192.24.218:18888代理IP运行结束***********
+2018-08-16 10:02:12,742 - root - DEBUG - -------------------------------程序运行开始-------------------------------
+2018-08-16 10:02:12,742 - root - DEBUG - *********122.192.24.218:18888代理IP开始运行***********
+2018-08-16 10:02:15,678 - root - DEBUG - 通过访问http://httpbin.org/ip验证代理IP失败,开始通过百度检测验证代理IP
+2018-08-16 10:02:15,946 - root - DEBUG - 通过百度检测验证代理IP失败
+2018-08-16 10:02:15,947 - root - DEBUG - 代理IP和爬虫实际使用的IP检测失败!!!
+2018-08-16 10:02:15,947 - root - DEBUG - 亚马逊地址是:https://www.amazon.com/gp/sign-in.html,搜索关键词是:bark collar, ASIN码是:B07DMF5B6Y
+2018-08-16 10:02:26,215 - root - DEBUG - WebDriverException('chrome not reachable\n  (Session info: chrome=68.0.3440.106)\n  (Driver info: chromedriver=2.41.578706 (5f725d1b4f0a4acbf5259df887244095596231db),platform=Mac OS X 10.13.5 x86_64)', None, None)
+2018-08-16 10:02:26,216 - root - DEBUG - *********122.192.24.218:18888代理IP运行结束***********

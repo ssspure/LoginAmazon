@@ -136,9 +136,16 @@ def goAmazon():
 
                 logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
 
-                loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
-
-                logging.debug("*********{}代理IP运行结束***********".format(ipLine))
+                try:
+                    loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
+                except:
+                    # 在发生错误的情况下，判断该产品是否已经添加到购物车
+                    if loginAmazon.addedToCart:
+                        logging.debug("ERROR:虽然发生了错误,但是该产品已经添加到购物车!!!")
+                    else:
+                        logging.debug("ERROR:发生了错误,并且该产品没有添加到购物车!!!")
+                finally:
+                    logging.debug("*********{}代理IP运行结束***********".format(ipLine))
         else:
             logging.debug("%s 代理IP不可用", ipLine)
 
