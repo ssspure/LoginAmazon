@@ -100,7 +100,8 @@ def setBrowser(ip, browser):
         options.add_argument("--proxy-server=http://{}".format(ip))
         # options = setChromeOptions(HOST, PORT)
         executable_path = os.path.join(config_path, "chromedriver.exe")
-        driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
+        # driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
+        driver = webdriver.Chrome(chrome_options=options)
     return driver
 
 
