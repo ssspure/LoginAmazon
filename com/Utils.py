@@ -11,6 +11,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import re
 from selenium.webdriver.chrome.options import Options
 import zipfile
+import platform
 
 
 def checkIP(ip, browser):
@@ -84,7 +85,12 @@ def setBrowser(ip, browser):
                 fp.set_preference("browser.cache.offline.enable", False)
                 fp.set_preference("network.http.use-cache", False)
                 fp.update_preferences()
-                executable_path = os.path.join(config_path, "geckodriver.exe")
+
+                if isWin64():
+                    geckodriver = "geckodriver64.exe"
+                else:
+                    geckodriver = "geckodriver32.exe"
+                executable_path = os.path.join(config_path, geckodriver)
                 return webdriver.Firefox(executable_path=executable_path,firefox_profile=fp)
 
         driver = my_proxy(HOST, PORT)
@@ -159,6 +165,14 @@ def closeBrowser(driver):
         driver.delete_all_cookies()
         driver.close()
         driver.quit()
+
+
+def isWin64():
+    """
+    检测Windows操作系统是否是64位操作系统
+    :return:
+    """
+    return ("64Bit" in platform.architecture())
 
 
 def setChromeOptions(ip, port):
