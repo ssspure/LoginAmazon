@@ -136,6 +136,8 @@ def goAmazon():
 
                 logging.debug("亚马逊地址是:%s,搜索关键词是:%s, ASIN码是:%s", amazonUrl, keyWord, asin)
 
+                # 根据info.properties中的browser的值，来设置浏览器选项
+                driver = setBrowser(ipLine, browser)
                 try:
                     loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
                 except:

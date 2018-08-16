@@ -75,6 +75,10 @@ def setBrowser(ip, browser):
                 fp.set_preference("network.proxy.ssl", PROXY_HOST)
                 fp.set_preference("network.proxy.ssl_port", int(PROXY_PORT))
                 fp.set_preference("general.useragent.override", "whater_useragent")
+                fp.set_preference("browser.cache.disk.enable", False)
+                fp.set_preference("browser.cache.memory.enable", False)
+                fp.set_preference("browser.cache.offline.enable", False)
+                fp.set_preference("network.http.use-cache", False)
                 fp.update_preferences()
                 return webdriver.Firefox(firefox_profile=fp)
 
@@ -120,7 +124,9 @@ def checkScrapeProxyIP(ip, driver):
         except Exception as e:
             logging.debug("通过百度检测验证代理IP失败")
     finally:
-        pass
+        driver.delete_all_cookies()
+        driver.clear()
+        driver.close()
 
     if ip == proxyIP:
         result = True

@@ -165,8 +165,9 @@ class LoginAmazon():
                 self.moveToProduct(product)
                 self.driver.back()
 
+            self.driver.delete_all_cookies()
+            self.driver.clear()
             self.driver.close()
-
             self.driver.quit()
 
 
