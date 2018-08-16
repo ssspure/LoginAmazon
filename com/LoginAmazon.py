@@ -166,7 +166,7 @@ class LoginAmazon():
             self.error = True
             logging.debug(repr(e))
         finally:
-            clseBrowser(self.driver)
+            closeBrowser(self.driver)
 
 
     def addToLikeList(self):

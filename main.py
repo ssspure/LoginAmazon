@@ -7,8 +7,8 @@ from com.Properties import Properties
 
 def goAmazon():
 
-    ipaddress = os.path.join(os.path.dirname(os.path.abspath(__file__)), "com/ipaddress")
-    infoProperties = os.path.join(os.path.dirname(os.path.abspath(__file__)), "com/info.properties")
+    ipaddress = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config/ipaddress")
+    infoProperties = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config/info.properties")
 
     ipFile = open(ipaddress, "r")
 

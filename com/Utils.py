@@ -55,7 +55,7 @@ def checkIP(ip, browser):
 
 
 def setup_logging(default_level=logging.DEBUG):
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logconfig.ymal")
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config/logconfig.ymal")
     if os.path.exists(path):
         with open(path, 'r', encoding='utf-8') as f:
             config = yaml.load(f)
@@ -65,6 +65,8 @@ def setup_logging(default_level=logging.DEBUG):
 
 
 def setBrowser(ip, browser):
+
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
     HOST = ip.split(":")[0]
     PORT = ip.split(":")[1]
     if browser == "firefox":
@@ -82,7 +84,8 @@ def setBrowser(ip, browser):
                 fp.set_preference("browser.cache.offline.enable", False)
                 fp.set_preference("network.http.use-cache", False)
                 fp.update_preferences()
-                return webdriver.Firefox(firefox_profile=fp)
+                executable_path = os.path.join(config_path, "geckodriver.exe")
+                return webdriver.Firefox(executable_path=executable_path,firefox_profile=fp)
 
         driver = my_proxy(HOST, PORT)
     elif browser == "chrome":
@@ -90,8 +93,8 @@ def setBrowser(ip, browser):
         # options.add_argument("--disable-gpu")
         # options.add_argument("--proxy-server=http://{}".format(ip))
         options = setChromeOptions(HOST, PORT)
-
-        driver = webdriver.Chrome(chrome_options=options)
+        executable_path = os.path.join(config_path, "chromedriver.exe")
+        driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
     return driver
 
 
@@ -127,7 +130,7 @@ def checkScrapeProxyIP(ip, driver):
         except Exception as e:
             logging.debug("通过百度检测验证代理IP失败")
     finally:
-        clseBrowser(driver)
+        closeBrowser(driver)
 
     logging.debug("爬虫实际使用的代理IP是:{}".format(proxyIP))
 
@@ -146,7 +149,7 @@ def checkScrapeProxyIP(ip, driver):
     return result, checkedProxyIP
 
 
-def clseBrowser(driver):
+def closeBrowser(driver):
     """
     关闭浏览器并清除缓存
     :param driver:
