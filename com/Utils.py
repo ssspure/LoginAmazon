@@ -124,9 +124,7 @@ def checkScrapeProxyIP(ip, driver):
         except Exception as e:
             logging.debug("通过百度检测验证代理IP失败")
     finally:
-        driver.delete_all_cookies()
-        driver.clear()
-        driver.close()
+        clseBrowser(driver)
 
     if ip == proxyIP:
         result = True
@@ -134,4 +132,16 @@ def checkScrapeProxyIP(ip, driver):
         result = False
 
     return result, checkedProxyIP
+
+
+def clseBrowser(driver):
+    """
+    关闭浏览器并清除缓存
+    :param driver:
+    :return:
+    """
+    if driver is not None:
+        driver.delete_all_cookies()
+        driver.close()
+        driver.quit()
 

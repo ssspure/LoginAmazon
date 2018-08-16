@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import logging
+from com.Utils import *
 
 # chrome_options = webdriver.ChromeOptions()
 # chrome_options.add_argument('--proxy-server=http://8.26.121.214:8080')
@@ -165,10 +166,7 @@ class LoginAmazon():
                 self.moveToProduct(product)
                 self.driver.back()
 
-            self.driver.delete_all_cookies()
-            self.driver.clear()
-            self.driver.close()
-            self.driver.quit()
+            clseBrowser(self.driver)
 
 
     def addToLikeList(self):
