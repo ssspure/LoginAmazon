@@ -126,6 +126,8 @@ def checkScrapeProxyIP(ip, driver):
     finally:
         clseBrowser(driver)
 
+    logging.debug("爬虫实际使用的代理IP是:{}".format(proxyIP))
+
     if ip == proxyIP:
         result = True
     else:
