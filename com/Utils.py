@@ -95,10 +95,10 @@ def setBrowser(ip, browser):
 
         driver = my_proxy(HOST, PORT)
     elif browser == "chrome":
-        # options = webdriver.ChromeOptions()
+        options = webdriver.ChromeOptions()
         # options.add_argument("--disable-gpu")
-        # options.add_argument("--proxy-server=http://{}".format(ip))
-        options = setChromeOptions(HOST, PORT)
+        options.add_argument("--proxy-server=http://{}".format(ip))
+        # options = setChromeOptions(HOST, PORT)
         executable_path = os.path.join(config_path, "chromedriver.exe")
         driver = webdriver.Chrome(executable_path=executable_path, chrome_options=options)
     return driver
