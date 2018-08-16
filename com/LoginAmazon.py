@@ -205,6 +205,7 @@ class LoginAmazon():
             self.driver.back()
             time.sleep(5)
             self.addedToCart = True
+            logging.debug("商品已经成功添加到购物车!!!")
         except Exception as e:
             raise e
 
