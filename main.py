@@ -91,7 +91,7 @@ def goAmazon():
         result = True
 
         if result:
-            logging.debug("%s 代理IP可用", ipLine)
+            logging.debug("*********{}代理IP开始运行***********".format(ipLine))
 
             # 根据info.properties中的browser的值，来设置浏览器选项
             driver = setBrowser(ipLine, browser)
@@ -138,7 +138,7 @@ def goAmazon():
 
                 loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
 
-                logging.debug("%s地址操作完毕", ipLine)
+                logging.debug("*********{}代理IP运行结束***********".format(ipLine))
         else:
             logging.debug("%s 代理IP不可用", ipLine)
 
@@ -146,6 +146,6 @@ def goAmazon():
 if __name__ == "__main__":
     # 设置日志信息
     setup_logging()
-    logging.debug("*******************************程序运行开始*****************************")
+    logging.debug("-------------------------------程序运行开始-------------------------------")
     goAmazon()
-    logging.debug("*******************************程序运行结束*****************************")
+    logging.debug("-------------------------------程序运行结束-------------------------------")
