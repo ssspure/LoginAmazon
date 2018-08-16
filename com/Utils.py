@@ -1,6 +1,5 @@
 from selenium import webdriver
 import time
-from selenium.common.exceptions import *
 import logging
 import os
 import yaml
@@ -9,6 +8,9 @@ import json
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import re
+from selenium.webdriver.chrome.options import Options
+import zipfile
 
 
 def checkIP(ip, browser):
@@ -63,9 +65,9 @@ def setup_logging(default_level=logging.DEBUG):
 
 
 def setBrowser(ip, browser):
+    HOST = ip.split(":")[0]
+    PORT = ip.split(":")[1]
     if browser == "firefox":
-        HOST = ip.split(":")[0]
-        PORT = ip.split(":")[1]
         def my_proxy(PROXY_HOST,PROXY_PORT):
                 fp = webdriver.FirefoxProfile()
                 # Direct = 0, Manual = 1, PAC = 2, AUTODETECT = 4, SYSTEM = 5
@@ -84,9 +86,10 @@ def setBrowser(ip, browser):
 
         driver = my_proxy(HOST, PORT)
     elif browser == "chrome":
-        options = webdriver.ChromeOptions()
-        options.add_argument("--disable-gpu")
-        options.add_argument("--proxy-server=http://{}".format(ip))
+        # options = webdriver.ChromeOptions()
+        # options.add_argument("--disable-gpu")
+        # options.add_argument("--proxy-server=http://{}".format(ip))
+        options = setChromeOptions(HOST, PORT)
 
         driver = webdriver.Chrome(chrome_options=options)
     return driver
@@ -128,6 +131,13 @@ def checkScrapeProxyIP(ip, driver):
 
     logging.debug("爬虫实际使用的代理IP是:{}".format(proxyIP))
 
+    regexp = re.compile(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b")
+
+    if regexp.findall(proxyIP):
+        proxyIP = regexp.findall(proxyIP)[0]
+    else:
+        proxyIP = ""
+
     if ip == proxyIP:
         result = True
     else:
@@ -147,3 +157,67 @@ def clseBrowser(driver):
         driver.close()
         driver.quit()
 
+
+def setChromeOptions(ip, port):
+    manifest_json = """
+    {
+        "version": "1.0.0",
+        "manifest_version": 2,
+        "name": "Chrome Proxy",
+        "permissions": [
+            "proxy",
+            "tabs",
+            "unlimitedStorage",
+            "storage",
+            "<all_urls>",
+            "webRequest",
+            "webRequestBlocking"
+        ],
+        "background": {
+            "scripts": ["background.js"]
+        },
+        "minimum_chrome_version":"22.0.0"
+    }
+    """
+
+    background_js = """
+    var config = {{
+            mode: "fixed_servers",
+            rules: {{
+              singleProxy: {{
+                scheme: "http",
+                host: {0},
+                port: parseInt({1})
+              }},
+              bypassList: ["foobar.com"]
+            }}
+          }};
+
+    chrome.proxy.settings.set({{value: config, scope: "regular"}}, function() {{}});
+
+    function callbackFn(details) {{
+        return {{
+            authCredentials: {{
+                username: "XXXXXXXXX",
+                password: "XXXXXXXXX"
+            }}
+        }};
+    }}
+
+    chrome.webRequest.onAuthRequired.addListener(
+                callbackFn,
+                {{urls: ["<all_urls>"]}},
+                ['blocking']
+    );
+    """.format(ip, port)
+
+    pluginfile = 'proxy_auth_plugin.zip'
+
+    with zipfile.ZipFile(pluginfile, 'w') as zp:
+        zp.writestr("manifest.json", manifest_json)
+        zp.writestr("background.js", background_js)
+
+    co = Options()
+    co.add_argument("--start-maximized")
+    co.add_extension(pluginfile)
+    return co
