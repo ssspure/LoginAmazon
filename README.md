@@ -4,3 +4,4 @@
     http://chromedriver.chromium.org/downloads
 3、geckodriver下载网站
     https://github.com/mozilla/geckodriver/releases
+4、所需要的Package都在config下的package.zip里面，但是lxm需要根据下面1中的命令自己安装
