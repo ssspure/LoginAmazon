@@ -173,7 +173,7 @@ def isWin64():
     检测Windows操作系统是否是64位操作系统
     :return:
     """
-    return ("64Bit" in platform.architecture())
+    return ("64bit" in platform.architecture())
 
 
 def setChromeOptions(ip, port):
