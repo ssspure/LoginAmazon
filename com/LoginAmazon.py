@@ -16,7 +16,7 @@ from com.Utils import *
 
 class LoginAmazon():
 
-    def __init__(self, driver, amazonUrl, userName, password, asin, keyWord, onlyCart):
+    def __init__(self, driver, amazonUrl, userName, password, asin, keyWord, onlyCart, clickOthers):
         # 浏览器对象
         self.driver = driver
         # 亚马逊地址
@@ -38,6 +38,8 @@ class LoginAmazon():
         self.errorNum = 0
         # 是够已经成功添加到购物车
         self.addedToCart = False
+        # 是否点击别人产品
+        self.clickOthers = clickOthers
 
         # 根据amazonUrl来判断是哪个国家的亚马逊
         if amazonUrl.find("co.jp") > 0:
@@ -91,21 +93,22 @@ class LoginAmazon():
 
                 products = soup.find_all('li', attrs={'id': re.compile(r"result_\d")})
 
-                randNum = random.randint(0, 10)
+                if self.clickOthers == "True":
+                    randNum = random.randint(0, 10)
 
-                # 随机点击别人产品
-                if len(products) <= randNum:
-                    randNum = 0
+                    # 随机点击别人产品
+                    if len(products) <= randNum:
+                        randNum = 0
 
-                product = products[randNum]
-                self.moveToProduct(product)
-                if self.country == 1:
-                    self.closeJapanWindow()
-                else:
-                    self.driver.back()
+                    product = products[randNum]
+                    self.moveToProduct(product)
+                    if self.country == 1:
+                        self.closeJapanWindow()
+                    else:
+                        self.driver.back()
 
-                # 进入产品页面之后获取页面代码
-                html = self.driver.page_source
+                    # 进入产品页面之后获取页面代码
+                    html = self.driver.page_source
 
                 for product in products:
                     asinTemp = product["data-asin"]
@@ -117,7 +120,7 @@ class LoginAmazon():
 
                 # 如果如果已经找到了对应的产品
                 if self.founded:
-                    logging.debug("找到了匹配的产品!!!")
+                    logging.debug("在第{}页找到了匹配的产品!!!".format(int(pageNum)))
                     break
                 else:
                     # 获取下一页
@@ -133,6 +136,16 @@ class LoginAmazon():
                 if self.country == 1:
                     handles = list(self.driver.window_handles)
                     self.driver.switch_to_window(handles[1])
+
+                # 检查当前页面中的ASIN码是否和给出的ASIN码一致
+                # 获取当前页面的ASIN码
+                elem = self.driver.find_element_by_id("ASIN")
+                asinValue = elem.get_attribute("value")
+                if asinValue != self.asin:
+                    logging.debug("虽然已经找到了产品，但是该产品的ASIN号跟您想要找的产品的ASIN号不一致")
+                    return
+                else:
+                    logging.debug("ASIN号一致!!!")
 
                 # 添加到购物车
                 self.addToCart()

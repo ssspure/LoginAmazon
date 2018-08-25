@@ -13,7 +13,25 @@ def goAmazon():
     ipFile = open(ipaddress, "r")
 
     properties = Properties(infoProperties)
+    # 获取执行浏览器
     browser = properties.get("browser")
+    # 亚马逊地址
+    amazonUrl = properties.get("amazonUrl")
+
+    # 用户账号
+    userName = "ssspure@qq.com"
+
+    # 用户密码
+    password = "plmokn321."
+
+    # asin码
+    asin = properties.get("asin")
+
+    # 搜索关键字
+    keyWord = properties.get("keyWord")
+
+    # 点击别人产品
+    clickOthers = properties.get("clickOthers")
 
     for ipLine in ipFile:
         ipLine = ipLine.strip('\n')
@@ -49,21 +67,6 @@ def goAmazon():
                 execute = 2
 
             if execute != 0:
-                # 亚马逊地址
-                amazonUrl = properties.get("amazonUrl")
-
-                # 用户账号
-                userName = "ssspure@qq.com"
-
-                # 用户密码
-                password = "plmokn321."
-
-                # asin码
-                asin = properties.get("asin")
-
-                # 搜索关键字
-                keyWord = properties.get("keyWord")
-
                 # 是否只添加到购物车
                 onlyCart = True
 
@@ -73,7 +76,7 @@ def goAmazon():
                 driver = setBrowser(ipLine, browser)
                 loginAmazon = None
                 try:
-                    loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart)
+                    loginAmazon = LoginAmazon(driver, amazonUrl, userName, password, asin, keyWord, onlyCart, clickOthers)
                 except:
                     if loginAmazon is None:
                         logging.debug("ERROR:程序发生错误!!!")

@@ -139,14 +139,14 @@ def checkScrapeProxyIP(ip, driver):
     finally:
         closeBrowser(driver)
 
-    logging.debug("爬虫实际使用的代理IP是:{}".format(proxyIP))
-
     regexp = re.compile(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b")
 
     if regexp.findall(proxyIP):
         proxyIP = regexp.findall(proxyIP)[0]
     else:
         proxyIP = ""
+
+    logging.debug("爬虫实际使用的代理IP是:{}".format(proxyIP))
 
     if ip == proxyIP:
         result = True
