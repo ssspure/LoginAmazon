@@ -22,7 +22,7 @@ def goAmazon():
     userName = "ssspure@qq.com"
 
     # 用户密码
-    password = "plmokn321."
+    password = "****"
 
     # asin码
     asin = properties.get("asin")
